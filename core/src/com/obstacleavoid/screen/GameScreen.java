@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.Logger;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.obstacleavoid.config.GameConfig;
@@ -16,6 +17,8 @@ import com.obstacleavoid.util.ViewportUtils;
 
 
 public class GameScreen implements Screen {
+
+    private static final Logger log = new Logger(GameScreen.class.getName(), Logger.DEBUG);
 
     private OrthographicCamera camera;
     private Viewport viewport;
@@ -32,20 +35,35 @@ public class GameScreen implements Screen {
         // create player
         player = new Player();
 
-        // calculate position
-        float startPlayerX = 0;
-        float startPlayerY = 0;
 
-        // position player
+        // 29
+        float startPlayerX = 12;
+        float startPlayerY = 12;
+
+
         player.setPosition(startPlayerX, startPlayerY);
+
     }
 
     @Override
     public void render(float delta) {
+        // update world
+        update(delta);
+
+        // clear screen
         GdxUtils.clearScreen();
 
-        //drawDebug();
+        // render debug graphics
         renderDebug();
+    }
+
+    private void update(float delta){
+        log.debug("payerX= " + player.getX() + " playerY= " + player.getY());
+        updatePlayer();
+    }
+
+    private void updatePlayer() {
+        player.update();
     }
 
     private void renderDebug() {
@@ -60,12 +78,13 @@ public class GameScreen implements Screen {
     }
 
     private void drawDebug() {
-       // ViewportUtils.drawGrid(viewport, renderer);
+       // ViewportUtils.drawGrid(viewport, renderer)
+        player.drawDebug(renderer);
     }
 
     @Override
     public void resize(int width, int height) {
-        viewport.update(width, height); // wo centering camera, i.e. false
+        viewport.update(width, height, true);
         ViewportUtils.debugPixelPerUnit(viewport);
     }
 
